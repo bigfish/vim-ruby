@@ -18,6 +18,15 @@ endif
 let s:cpo_save = &cpo
 set cpo-=C
 
+if exists(':RubyLint') != 2
+    command RubyLint :call RubyLint(0)
+endif
+
+augroup ruby
+  au!
+  au BufWritePost * call RubyLint(1)
+augroup end
+
 " default settings runs script normally
 " add '-c' switch to run syntax check only:
 "
@@ -27,10 +36,10 @@ set cpo-=C
 "
 "   :make -c %<CR>
 "
-CompilerSet makeprg=ruby\ -w\ $*
+CompilerSet makeprg=ruby\ -w\ %
 
 CompilerSet errorformat=
-    \%+E%f:%l:\ parse\ error,
+    \%+E%f:%l:\ syntax\ error,
     \%W%f:%l:\ warning:\ %m,
     \%E%f:%l:in\ %*[^:]:\ %m,
     \%E%f:%l:\ %m,
@@ -38,6 +47,32 @@ CompilerSet errorformat=
     \%-Z%\tfrom\ %f:%l,
     \%-Z%p^,
     \%-G%.%#
+
+
+function! RubyLint(saved)
+
+    if !a:saved && &modified
+        " Save before running
+        write
+    endif	
+
+	"shellpipe
+    if has('win32') || has('win16') || has('win95') || has('win64')
+        setlocal sp=>%s
+    else
+        setlocal sp=>%s\ 2>&1
+    endif
+
+	"if exists('b:jshint_goto_error') && b:jshint_goto_error
+		    silent lmake
+	"else
+			"silent lmake!
+	"endif
+	
+	"open local window with errors
+	:lwindow
+	
+endfunction
 
 let &cpo = s:cpo_save
 unlet s:cpo_save
