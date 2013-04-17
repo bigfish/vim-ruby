@@ -19,6 +19,9 @@ else
   setlocal keywordprg=ri
 endif
 
+" set compiler for this file
+compiler ruby
+
 " Matchit support
 if exists("loaded_matchit") && !exists("b:match_words")
   let b:match_ignorecase = 0

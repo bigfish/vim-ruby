@@ -64,7 +64,7 @@ function! RubyLint(saved)
     endif
 
 	"if exists('b:jshint_goto_error') && b:jshint_goto_error
-		    silent lmake
+		    silent lmake!
 	"else
 			"silent lmake!
 	"endif
